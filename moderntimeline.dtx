@@ -1,0 +1,377 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2011 by Raphaël Pinson <raphink@gmail.com>
+% ---------------------------------------------------------------------------
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Raphaël Pinson.
+%
+% This work consists of the files moderntimeline.dtx and moderntimeline.ins
+% and the derived filebase moderntimeline.sty.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{moderntimeline.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<package>\ProvidesPackage{moderntimeline}
+%<*package>
+    [2011/09/28 0.1 Add timelines to moderncv entries]
+%</package>
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{moderntimeline}[2011/09/28]
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{moderntimeline.dtx}
+  \PrintChanges
+  \PrintIndex
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{195}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{0.1}{2011/09/28}{Converted to DTX file}
+%
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \providecommand*{\url}{\texttt}
+% \GetFileInfo{moderntimeline.dtx}
+% \title{The \textsf{moderntimeline} package}
+% \author{Raphaël Pinson \\ \url{raphink@gmail.com}}
+% \date{\fileversion~from \filedate}
+%
+% \maketitle
+%
+% \section{Introduction}
+%
+% Put text here.
+%
+% \section{Usage}
+%
+% Put text here.
+%
+%
+% \DescribeMacro{\tlwidth}
+%
+%
+% \DescribeMacro{\tltextstart}
+%
+%
+% \DescribeMacro{\tltextend}
+%
+%
+% \DescribeMacro{\tltext}
+%
+%
+% \DescribeMacro{\tlmaxdates}
+%
+%
+% \DescribeMacro{\tldate}
+%
+%
+% \DescribeMacro{\tldatelabelcventry}
+%
+%
+% \DescribeMacro{\tldatecventry}
+%
+%
+% \DescribeMacro{\tlcventry}
+%
+%
+% \DescribeMacro{\tllabelcventry}
+%
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% \iffalse
+%<*package>
+% \fi
+%
+%    \begin{macrocode}
+\ProvidesPackage{moderntimeline}
+\RequirePackage{tikz}
+%    \end{macrocode}
+%
+% \begin{macro}{\tlwidth}
+%    \begin{macrocode}
+\newcommand{\tlwidth}[1]{%
+   \def\tl@width{#1}
+   \pgfmathsetmacro\tl@textstartabove{\tl@width+1pt}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Default
+%    \begin{macrocode}
+\tlwidth{0.8ex}
+%    \end{macrocode}
+%
+% \begin{macro}{\tltextstart}
+%    \begin{macrocode}
+\newcommand{\tltextstart}[1]{%
+%    \end{macrocode}
+% #1: textsize
+%    \begin{macrocode}
+   \tikzset{
+       tlstartyear/.style={
+           font=#1,
+           name=tlstartyear,
+           above=\tl@textstartabove,
+           inner xsep=0pt,
+           anchor=base west,
+       }
+   }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tltextend}
+%    \begin{macrocode}
+\newcommand{\tltextend}[1]{%
+%    \end{macrocode}
+% #1: textsize
+%    \begin{macrocode}
+   \tikzset{
+       tlendyear/.style={
+           font=#1,
+           name=tlendyear,
+           below,
+           inner xsep=0pt,
+           anchor=north east,
+       }
+   }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tltext}
+%    \begin{macrocode}
+\newcommand{\tltext}[1]{%
+%    \end{macrocode}
+% #1: textsize
+%    \begin{macrocode}
+   \tltextstart{#1}%
+   \tltextend{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlmaxdates}
+%    \begin{macrocode}
+\newcommand{\tlmaxdates}[2]{%
+   \def\tlfirstyear{#1}
+   \def\tllastyear{#2}
+   \pgfmathsetmacro\tlyearrange{\tllastyear-\tlfirstyear}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tldate}
+%    \begin{macrocode}
+\newcommand{\tldate}[3][sectionrectanglecolor]{%
+%    \end{macrocode}
+% #1 (opt): color, #2: date, #3: label
+%    \begin{macrocode}
+\pgfmathsetmacro\tlendyear{\tllastyear}
+\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+%    \end{macrocode}
+% #1 (opt): color, #2: date
+%    \begin{macrocode}
+   \tikz{%
+%    \end{macrocode}
+% Push stuff with a white rectangle
+%    \begin{macrocode}
+      \fill [white] (0,0)
+      ++(\tlstartfraction*\hintscolumnwidth,0pt)
+      rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+      \fill [#1] (0,0)
+      ++(\tlstartfraction*\hintscolumnwidth,0pt)
+      node [tlstartyear] {#3}
+      node {$\bullet$};
+   }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tldatelabelcventry}
+%    \begin{macrocode}
+\newcommand{\tldatelabelcventry}[8][sectionrectanglecolor]{%
+%    \end{macrocode}
+% #1 (opt): color, #2: startyear, #3: label, #4-#8: entry
+%    \begin{macrocode}
+\pgfmathsetmacro\tlendyear{\tllastyear}
+\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+%    \end{macrocode}
+% #1 (opt): color, #2: date
+%    \begin{macrocode}
+ \cventry{\tikz[baseline=(tlendyear.north)]{
+%    \end{macrocode}
+% Push stuff with a white rectangle
+%    \begin{macrocode}
+      \fill [white] (0,0)
+          ++(\tlstartfraction*\hintscolumnwidth,0pt)
+          rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+      \fill [#1] (0,0)
+          ++(\tlstartfraction*\hintscolumnwidth,0pt)
+          node [tlstartyear] {#3}
+          node {$\bullet$};
+   }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+{#4}{#5}{#6}{#7}{#8}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\tldatecventry}
+%    \begin{macrocode}
+\newcommand{\tldatecventry}[7][sectionrectanglecolor]{%
+%    \end{macrocode}
+% #1 (opt): color, #2: startyear, #3-#7: entry
+%    \begin{macrocode}
+\pgfmathsetmacro\tlendyear{\tllastyear}
+\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+%    \end{macrocode}
+% #1 (opt): color, #2: date
+%    \begin{macrocode}
+ \cventry{\tikz[baseline=(tlendyear.north)]{
+%    \end{macrocode}
+% Push stuff with a white rectangle
+%    \begin{macrocode}
+      \fill [white] (0,0)
+          ++(\tlstartfraction*\hintscolumnwidth,0pt)
+          rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+      \fill [#1] (0,0)
+          ++(\tlstartfraction*\hintscolumnwidth,0pt)
+          node [tlstartyear] {#2}
+          node {$\bullet$};
+   }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+{#3}{#4}{#5}{#6}{#7}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\tlcventry}
+%    \begin{macrocode}
+\newcommand{\tlcventry}[8][sectionrectanglecolor]{%
+%    \end{macrocode}
+% #1 (opt): color, #2: startyear, #3: endyear, #4-#8: entry
+%    \begin{macrocode}
+\pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
+\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+ \cventry{\tikz[baseline=(tlendyear.north)]{
+     \fill [#1] (0,0) 
+        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {#2}
+%    \end{macrocode}
+% Add a little shadow
+%    \begin{macrocode}
+        rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt)
+        node [tlendyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
+        (\hintscolumnwidth,0pt) ;
+     \ifnum #3=0
+        \shade [left color=#1] (\tlstartfraction*\hintscolumnwidth,0) 
+            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+     \else
+        \fill [#1] (\tlstartfraction*\hintscolumnwidth,0) 
+            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+     \fi
+     }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+{#4}{#5}{#6}{#7}{#8}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\tllabelcventry}
+%    \begin{macrocode}
+\newcommand{\tllabelcventry}[9][sectionrectanglecolor]{%
+%    \end{macrocode}
+% #1 (opt): color, #2: startyear, #3: endyear, #4: label, #5-#9: entry
+%    \begin{macrocode}
+\pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
+\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+ \cventry{\tikz[baseline=(tlendyear.north)]{
+     \fill [#1] (0,0) 
+        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {#4}
+%    \end{macrocode}
+% Add a little shadow
+%    \begin{macrocode}
+        rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt);
+     \ifnum #3=0
+        \shade [left color=#1] (\tlstartfraction*\hintscolumnwidth,0) 
+            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+     \else
+        \fill [#1] (\tlstartfraction*\hintscolumnwidth,0) 
+            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+     \fi
+     }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+{#5}{#6}{#7}{#8}{#9}
+}
+%    \end{macrocode}
+%
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+\endinput
