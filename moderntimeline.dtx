@@ -62,7 +62,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
-% \changes{0.1}{2011/09/28}{Converted to DTX file}
+% \changes{0.1}{2011/09/28}{Initial release}
 %
 % \DoNotIndex{\newcommand,\newenvironment}
 %
@@ -144,7 +144,6 @@
 %    \begin{macrocode}
 \newcommand{\tltextstart}[1]{%
 %    \end{macrocode}
-% #1: textsize
 %    \begin{macrocode}
    \tikzset{
        tlstartyear/.style={
@@ -164,7 +163,6 @@
 %    \begin{macrocode}
 \newcommand{\tltextend}[1]{%
 %    \end{macrocode}
-% #1: textsize
 %    \begin{macrocode}
    \tikzset{
        tlendyear/.style={
@@ -184,7 +182,6 @@
 %    \begin{macrocode}
 \newcommand{\tltext}[1]{%
 %    \end{macrocode}
-% #1: textsize
 %    \begin{macrocode}
    \tltextstart{#1}%
    \tltextend{#1}
@@ -208,13 +205,11 @@
 %    \begin{macrocode}
 \newcommand{\tldate}[3][sectionrectanglecolor]{%
 %    \end{macrocode}
-% #1 (opt): color, #2: date, #3: label
 %    \begin{macrocode}
 \pgfmathsetmacro\tlendyear{\tllastyear}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 %    \end{macrocode}
-% #1 (opt): color, #2: date
 %    \begin{macrocode}
    \tikz{%
 %    \end{macrocode}
@@ -237,13 +232,11 @@
 %    \begin{macrocode}
 \newcommand{\tldatelabelcventry}[8][sectionrectanglecolor]{%
 %    \end{macrocode}
-% #1 (opt): color, #2: startyear, #3: label, #4-#8: entry
 %    \begin{macrocode}
 \pgfmathsetmacro\tlendyear{\tllastyear}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 %    \end{macrocode}
-% #1 (opt): color, #2: date
 %    \begin{macrocode}
  \cventry{\tikz[baseline=(tlendyear.north)]{
 %    \end{macrocode}
@@ -270,13 +263,11 @@
 %    \begin{macrocode}
 \newcommand{\tldatecventry}[7][sectionrectanglecolor]{%
 %    \end{macrocode}
-% #1 (opt): color, #2: startyear, #3-#7: entry
 %    \begin{macrocode}
 \pgfmathsetmacro\tlendyear{\tllastyear}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 %    \end{macrocode}
-% #1 (opt): color, #2: date
 %    \begin{macrocode}
  \cventry{\tikz[baseline=(tlendyear.north)]{
 %    \end{macrocode}
@@ -303,7 +294,6 @@
 %    \begin{macrocode}
 \newcommand{\tlcventry}[8][sectionrectanglecolor]{%
 %    \end{macrocode}
-% #1 (opt): color, #2: startyear, #3: endyear, #4-#8: entry
 %    \begin{macrocode}
 \pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
@@ -339,7 +329,6 @@
 %    \begin{macrocode}
 \newcommand{\tllabelcventry}[9][sectionrectanglecolor]{%
 %    \end{macrocode}
-% #1 (opt): color, #2: startyear, #3: endyear, #4: label, #5-#9: entry
 %    \begin{macrocode}
 \pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
