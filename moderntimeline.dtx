@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{209}
+% \CheckSum{184}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -76,41 +76,143 @@
 %
 % \section{Introduction}
 %
-% Put text here.
+% As I was reworking my CV (which uses \textsf{moderncv}),
+% the thought came to me that instead of just putting
+% dates in front of each entries, it would be nice to have
+% timelines to make them more graphical and get a better
+% grasp of the time span of each entry.
+%
+% After playing a bit, I asked a question on
+% stackexchange.com\footnote{\url{http://tex.stackexchange.com/questions/29725/putting-a-timeline-for-dates-in-moderncv}}
+% and adapted the answer provided by Jake\footnote{\url{http://tex.stackexchange.com/users/2552/jake}}
+% and turned it into this package.
 %
 % \section{Usage}
 %
-% Put text here.
+% This package is to be used together with the \textsf{moderncv} class,
+% and can be loaded with:
 %
+% \begin{verbatim}
+%    \usepackage{moderntimeline}
+% \end{verbatim}
+%
+% \subsection{Settings}
+%
+% Before you typeset entries, you need to adjust
+% the settings for this package.
 %
 % \DescribeMacro{\tlwidth}
+% You can optionally set the width of the time line
+% by calling |\tlwidth| with a dimension.
 %
+% \DescribeMacro{\tlrunningwidth}
+% For each entry, a running line is traced behind the
+% time line. You can set the width of this line by
+% means of the |\tlrunningwidth| macro.
+%
+% \DescribeMacro{\tlrunningcolor}
+% To set the color of the running line placed behind
+% the time line, you can use the |\tlrunningcolor| macro.
 %
 % \DescribeMacro{\tltextstart}
-%
+% If you wish to set the size of the start date label,
+% you can do so by using |\tltextstart|, passing it
+% a text size macro.
 %
 % \DescribeMacro{\tltextend}
-%
+% If you wish to set the size of the end date label,
+% you can do so by using |\tltextend|, passing it
+% a text size macro.
 %
 % \DescribeMacro{\tltext}
-%
+% You can set the sizes of both the start and end dates
+% by calling the |\tltext| macro with a text size macro.
 %
 % \DescribeMacro{\tlmaxdates}
+% Before you can typeset any entry, you need to specify
+% the maximal range of dates which will serve as a reference.
+% This range will be mapped to the width of the left column,
+% and dates will be positionned accordingly.
+% To set the range, use the |\tlmaxdates| macro, passing it
+% the first and last dates you will be using:
 %
+% \begin{verbatim}
+%    \tlmaxdates{1999}{2012}
+% \end{verbatim}
 %
-% \DescribeMacro{\tldate}
+% If you are going to use the last date of the range
+% as a start date or a unique date for an entry,
+% you should probably set the max date a bit higher
+% to prevent the date label from overflowing into
+% the entry text.
 %
+% \subsection{CV entries}
 %
-% \DescribeMacro{\tldatelabelcventry}
-%
-%
-% \DescribeMacro{\tldatecventry}
+% This package provides new CV entry commands
+% for the \textsf{moderncv} class.
+% They are described in this section.
 %
 %
 % \DescribeMacro{\tlcventry}
+% The |\tlcventry| macro lets you typeset
+% a date range.
+% In addition to the standard CV entry, one option
+% and two mandatory arguments are added:
+%
+% \begin{verbatim}
+%    \tlcventry{1999}{2002}{WYSIWYG User}{Unnamed Company}
+%        {Somewhere}{}{Tried hard to typeset documents}
+%    \tlcventry[blue]{2002}{0}{Happy TeXnician}{Any Company}
+%        {Anywhere}{}{Achieved nice typography and shared code with friends}
+% \end{verbatim}
+%
+% The option sets the color of the time line.
+% If unset, the color defaults to the theme color of the CV.
+%
+% The two arguments added in the beginning of the call
+% are the start and end dates for the entry.
+% If the position is still held, use \texttt{0} as the end date.
+% This will add a gradient at the end of the time line.
 %
 %
 % \DescribeMacro{\tllabelcventry}
+% The |\tllabelcventry| macro is similar to |\tlcventry|,
+% but it takes yet a third additional argument, which lets you
+% set a label for the time line.
+% When this is used, the dates are not typeset around the time line,
+% only the label is placed where the start date would normally be.
+%
+% This is useful when your dates contain month names, or if the
+% time span is too short to properly typeset the dates above
+% and under the time line:
+%
+% \begin{verbatim}
+%    \tllabelcventry[magenta]{2002}{2003}{July--November 2002}
+%        {Scribus Student}{GNU School}
+%        {The Internet}{}{Tried Scribus for a short while}
+% \end{verbatim}
+%
+% \DescribeMacro{\tldatecventry}
+% Positions usually last long enough to draw time lines,
+% but there are also punctual entries, such as diplomas.
+% The |\tldatecventry| lets to typeset unique dates.
+% It places a bullet on the date and typesets the date above it:
+%
+% \begin{verbatim}
+%    \tldatecventry[brown]{2011}{Trusted TeX.SX user}{}{tex.stackexchange.com}
+%        {The Internet}{}{Achived 20k reputation on TeX.SX}
+% \end{verbatim}
+%
+%
+% \DescribeMacro{\tldatelabelcventry}
+% Similarly to |\tllabelcventry|, you might want to place
+% a label on a unique date entry, such as an exact date
+% or a month. The |\tldatelabelcventry| provides a parameter to achive this:
+%
+% \begin{verbatim}
+%    \tldatelabelcventry[brown]{2011}{Christmas 2011}{Happy TeXer}{}{Home}
+%        {Townville}{}{Received Don Knuth's \emph{3:16} as a gift.}
+% \end{verbatim}
 %
 %
 % \StopEventually{}
@@ -215,29 +317,6 @@
    \def\tlfirstyear{#1}
    \def\tllastyear{#2}
    \pgfmathsetmacro\tlyearrange{\tllastyear-\tlfirstyear}
-}
-%    \end{macrocode}
-% \end{macro}
-%
-%
-% \begin{macro}{\tldate}
-%    \begin{macrocode}
-\newcommand{\tldate}[3][sectionrectanglecolor]{%
-%    \end{macrocode}
-%    \begin{macrocode}
-\pgfmathsetmacro\tlendyear{\tllastyear}
-\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-%    \end{macrocode}
-%    \begin{macrocode}
-   \tikz{%
-     \fill [\tl@runningcolor] (0,0)
-        rectangle (\hintscolumnwidth,\tl@runningwidth);
-     \fill [#1] (0,0)
-        ++(\tlstartfraction*\hintscolumnwidth,0pt)
-        node [tlstartyear] {#3}
-        node {$\bullet$};
-   }
 }
 %    \end{macrocode}
 % \end{macro}
