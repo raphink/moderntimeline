@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{195}
+% \CheckSum{207}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -135,9 +135,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% Default
+% \begin{macro}{\tlrunningwidth}
+%    \begin{macrocode}
+\newcommand{\tlrunningwidth}[1]{%
+   \def\tl@runningwidth{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlrunningcolor}
+%    \begin{macrocode}
+\newcommand{\tlrunningcolor}[1]{%
+   \def\tl@runningcolor{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Defaults
 %    \begin{macrocode}
 \tlwidth{0.8ex}
+\tlrunningwidth{0.05ex}
+\tlrunningcolor{gray}
 %    \end{macrocode}
 %
 % \begin{macro}{\tltextstart}
@@ -212,16 +230,12 @@
 %    \end{macrocode}
 %    \begin{macrocode}
    \tikz{%
-%    \end{macrocode}
-% Push stuff with a white rectangle
-%    \begin{macrocode}
-      \fill [white] (0,0)
-      ++(\tlstartfraction*\hintscolumnwidth,0pt)
-      rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
-      \fill [#1] (0,0)
-      ++(\tlstartfraction*\hintscolumnwidth,0pt)
-      node [tlstartyear] {#3}
-      node {$\bullet$};
+     \fill [\tl@runningcolor] (0,0)
+        rectangle (\hintscolumnwidth,\tl@runningwidth);
+     \fill [#1] (0,0)
+        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {#3}
+        node {$\bullet$};
    }
 }
 %    \end{macrocode}
@@ -239,25 +253,18 @@
 %    \end{macrocode}
 %    \begin{macrocode}
  \cventry{\tikz[baseline=(tlendyear.north)]{
-%    \end{macrocode}
-% Push stuff with a white rectangle
-%    \begin{macrocode}
-      \fill [white] (0,0)
-          ++(\tlstartfraction*\hintscolumnwidth,0pt)
-          rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
-      \fill [#1] (0,0)
-          ++(\tlstartfraction*\hintscolumnwidth,0pt)
-          node [tlstartyear] {#3}
-          node {$\bullet$};
+     \fill [\tl@runningcolor] (0,0)
+        rectangle (\hintscolumnwidth,\tl@runningwidth);
+     \fill [#1] (0,0)
+        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {#3}
+        node {$\bullet$};
    }
 }
-%    \end{macrocode}
-% \end{macro}
-%
-%    \begin{macrocode}
 {#4}{#5}{#6}{#7}{#8}
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\tldatecventry}
 %    \begin{macrocode}
@@ -270,25 +277,18 @@
 %    \end{macrocode}
 %    \begin{macrocode}
  \cventry{\tikz[baseline=(tlendyear.north)]{
-%    \end{macrocode}
-% Push stuff with a white rectangle
-%    \begin{macrocode}
-      \fill [white] (0,0)
-          ++(\tlstartfraction*\hintscolumnwidth,0pt)
-          rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
-      \fill [#1] (0,0)
-          ++(\tlstartfraction*\hintscolumnwidth,0pt)
-          node [tlstartyear] {#2}
-          node {$\bullet$};
+     \fill [\tl@runningcolor] (0,0)
+        rectangle (\hintscolumnwidth,\tl@runningwidth);
+     \fill [#1] (0,0)
+        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {#2}
+        node {$\bullet$};
    }
 }
-%    \end{macrocode}
-% \end{macro}
-%
-%    \begin{macrocode}
 {#3}{#4}{#5}{#6}{#7}
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\tlcventry}
 %    \begin{macrocode}
@@ -299,12 +299,11 @@
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
  \cventry{\tikz[baseline=(tlendyear.north)]{
+     \fill [\tl@runningcolor] (0,0)
+        rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
         ++(\tlstartfraction*\hintscolumnwidth,0pt)
         node [tlstartyear] {#2}
-%    \end{macrocode}
-% Add a little shadow
-%    \begin{macrocode}
         rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt)
         node [tlendyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
         (\hintscolumnwidth,0pt) ;
@@ -317,13 +316,10 @@
      \fi
      }
 }
-%    \end{macrocode}
-% \end{macro}
-%
-%    \begin{macrocode}
 {#4}{#5}{#6}{#7}{#8}
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\tllabelcventry}
 %    \begin{macrocode}
@@ -334,12 +330,11 @@
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
  \cventry{\tikz[baseline=(tlendyear.north)]{
+     \fill [\tl@runningcolor] (0,0)
+        rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
         ++(\tlstartfraction*\hintscolumnwidth,0pt)
         node [tlstartyear] {#4}
-%    \end{macrocode}
-% Add a little shadow
-%    \begin{macrocode}
         rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt);
      \ifnum #3=0
         \shade [left color=#1] (\tlstartfraction*\hintscolumnwidth,0) 
@@ -350,13 +345,10 @@
      \fi
      }
 }
-%    \end{macrocode}
-% \end{macro}
-%
-%    \begin{macrocode}
 {#5}{#6}{#7}{#8}{#9}
 }
 %    \end{macrocode}
+% \end{macro}
 %
 % \iffalse
 %</package>
