@@ -26,7 +26,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{moderntimeline}
 %<*package>
-    [2011/09/28 0.1 Add timelines to moderncv entries]
+    [2011/09/29 0.2 Add timelines to moderncv entries]
 %</package>
 %
 %<*driver>
@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{184}
+% \CheckSum{197}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -62,6 +62,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.2}{2011/09/29}{Add tlsince and options for tltext*}
 % \changes{0.1}{2011/09/28}{Initial release}
 %
 % \DoNotIndex{\newcommand,\newenvironment}
@@ -119,14 +120,35 @@
 % you can do so by using |\tltextstart|, passing it
 % a text size macro.
 %
+% It also takes an optional first argument to set the
+% position of the label, for example if you wish
+% to center the label on the start of the line
+% and set the text size to |\scriptsize|:
+%
+% \begin{verbatim}
+%    \tltextstart[base]{\scriptsize}
+% \end{verbatim}
+%
+%
 % \DescribeMacro{\tltextend}
 % If you wish to set the size of the end date label,
 % you can do so by using |\tltextend|, passing it
 % a text size macro.
 %
+% It also takes an optional first argument to set the
+% position of the label, for example if you wish
+% to center the label on the start of the line
+% and set the text size to |\scriptsize|:
+%
+% \begin{verbatim}
+%    \tltextend[base]{\scriptsize}
+% \end{verbatim}
+%
+%
 % \DescribeMacro{\tltext}
 % You can set the sizes of both the start and end dates
 % by calling the |\tltext| macro with a text size macro.
+%
 %
 % \DescribeMacro{\tlmaxdates}
 % Before you can typeset any entry, you need to specify
@@ -145,6 +167,17 @@
 % you should probably set the max date a bit higher
 % to prevent the date label from overflowing into
 % the entry text.
+%
+%
+% \DescribeMacro{\tlsince}
+% When using a date range without an end year,
+% you might want to add "Since" in front of the starting year.
+% In order to do this, you can use the |\tlsince| macro:
+%
+% \begin{verbatim}
+%    \tlsince{Since~}
+% \end{verbatim}
+%
 %
 % \subsection{CV entries}
 %
@@ -253,18 +286,24 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\tlsince}
+%    \begin{macrocode}
+\newcommand{\tlsince}[1]{%
+   \def\tl@since{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\tltextstart}
 %    \begin{macrocode}
-\newcommand{\tltextstart}[1]{%
-%    \end{macrocode}
-%    \begin{macrocode}
+\newcommand{\tltextstart}[2][base west]{%
    \tikzset{
        tlstartyear/.style={
-           font=#1,
+           font=#2,
            name=tlstartyear,
            above=\tl@textstartabove,
            inner xsep=0pt,
-           anchor=base west,
+           anchor=#1,
        }
    }
 }
@@ -274,16 +313,14 @@
 %
 % \begin{macro}{\tltextend}
 %    \begin{macrocode}
-\newcommand{\tltextend}[1]{%
-%    \end{macrocode}
-%    \begin{macrocode}
+\newcommand{\tltextend}[2][north east]{%
    \tikzset{
        tlendyear/.style={
-           font=#1,
+           font=#2,
            name=tlendyear,
            below,
            inner xsep=0pt,
-           anchor=north east,
+           anchor=#1,
        }
    }
 }
@@ -332,7 +369,7 @@
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 %    \end{macrocode}
 %    \begin{macrocode}
- \cventry{\tikz[baseline=(tlendyear.north)]{
+ \cventry{\tikz{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
@@ -356,7 +393,7 @@
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 %    \end{macrocode}
 %    \begin{macrocode}
- \cventry{\tikz[baseline=(tlendyear.north)]{
+ \cventry{\tikz{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
@@ -378,12 +415,13 @@
 \pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
 \pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
 \pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\ifnum #3=0 \def\tlstartlabel{\tl@since #2} \else \def\tlstartlabel{#2} \fi
  \cventry{\tikz[baseline=(tlendyear.north)]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
         ++(\tlstartfraction*\hintscolumnwidth,0pt)
-        node [tlstartyear] {#2}
+        node [tlstartyear] {\tlstartlabel}
         rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt)
         node [tlendyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
         (\hintscolumnwidth,0pt) ;
