@@ -26,7 +26,7 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{moderntimeline}
 %<*package>
-    [2011/09/29 0.3 Add timelines to moderncv entries]
+    [2011/10/02 0.4 Add timelines to moderncv entries]
 %</package>
 %
 %<*driver>
@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{198}
+% \CheckSum{203}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -62,6 +62,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.4}{2011/10/02}{Add firstyear and lastyear options}
 % \changes{0.3}{2011/09/29}{Bugfix: initialize tlsince}
 % \changes{0.2}{2011/09/29}{Add tlsince and options for tltext*}
 % \changes{0.1}{2011/09/28}{Initial release}
@@ -95,8 +96,12 @@
 % and can be loaded with:
 %
 % \begin{verbatim}
-%    \usepackage{moderntimeline}
+%    \usepackage[firstyear=1999,lastyear=2012]{moderntimeline}
 % \end{verbatim}
+%
+% The \texttt{firstyear} and \texttt{lastyear} options indicate the maximum dates used
+% to calibrate the time line. They are not mandatory and can be set later
+% by means of the |\ltmaxdates| macro.
 %
 % \subsection{Settings}
 %
@@ -168,6 +173,9 @@
 % you should probably set the max date a bit higher
 % to prevent the date label from overflowing into
 % the entry text.
+%
+% Since version 0.4, you can set these dates by passing the
+% \texttt{firstyear} and \texttt{lastyear} options to the package.
 %
 %
 % \DescribeMacro{\tlsince}
@@ -260,6 +268,14 @@
 %    \begin{macrocode}
 \ProvidesPackage{moderntimeline}
 \RequirePackage{tikz}
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{
+   family=moderntimeline,
+   prefix=tl@,
+}
+\DeclareStringOption{firstyear}
+\DeclareStringOption{lastyear}
+\ProcessKeyvalOptions*
 %    \end{macrocode}
 %
 % \begin{macro}{\tlwidth}
@@ -316,9 +332,9 @@
 %    \begin{macrocode}
 \newcommand{\tltextend}[2][north east]{%
    \tikzset{
-       tlendyear/.style={
+       tl@endyear/.style={
            font=#2,
-           name=tlendyear,
+           name=tl@endyear,
            below,
            inner xsep=0pt,
            anchor=#1,
@@ -353,9 +369,9 @@
 % \begin{macro}{\tlmaxdates}
 %    \begin{macrocode}
 \newcommand{\tlmaxdates}[2]{%
-   \def\tlfirstyear{#1}
-   \def\tllastyear{#2}
-   \pgfmathsetmacro\tlyearrange{\tllastyear-\tlfirstyear}
+   \def\tl@firstyear{#1}
+   \def\tl@lastyear{#2}
+   \pgfmathsetmacro\tl@yearrange{\tl@lastyear-\tl@firstyear}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -366,16 +382,16 @@
 \newcommand{\tldatelabelcventry}[8][sectionrectanglecolor]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tlendyear{\tllastyear}
-\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tl@endyear{\tl@lastyear}
+\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 %    \end{macrocode}
 %    \begin{macrocode}
  \cventry{\tikz{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
-        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tlstartyear] {#3}
         node {$\bullet$};
    }
@@ -390,16 +406,16 @@
 \newcommand{\tldatecventry}[7][sectionrectanglecolor]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tlendyear{\tllastyear}
-\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
+\pgfmathsetmacro\tl@endyear{\tl@lastyear}
+\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 %    \end{macrocode}
 %    \begin{macrocode}
  \cventry{\tikz{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
-        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tlstartyear] {#2}
         node {$\bullet$};
    }
@@ -414,25 +430,25 @@
 \newcommand{\tlcventry}[8][sectionrectanglecolor]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
-\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\ifnum #3=0 \def\tlstartlabel{\tl@since #2} \else \def\tlstartlabel{#2} \fi
- \cventry{\tikz[baseline=(tlendyear.north)]{
+\pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}
+\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\ifnum #3=0 \def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
+ \cventry{\tikz[baseline=(tl@endyear.north)]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
-        ++(\tlstartfraction*\hintscolumnwidth,0pt)
-        node [tlstartyear] {\tlstartlabel}
-        rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt)
-        node [tlendyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
+        ++(\tl@startfraction*\hintscolumnwidth,0pt)
+        node [tlstartyear] {\tl@startlabel}
+        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt)
+        node [tl@endyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
         (\hintscolumnwidth,0pt) ;
      \ifnum #3=0
-        \shade [left color=#1] (\tlstartfraction*\hintscolumnwidth,0) 
-            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+        \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0) 
+            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \else
-        \fill [#1] (\tlstartfraction*\hintscolumnwidth,0) 
-            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0) 
+            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \fi
      }
 }
@@ -446,22 +462,22 @@
 \newcommand{\tllabelcventry}[9][sectionrectanglecolor]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tlendyear{ifthenelse(#3==0,\tllastyear,#3)}
-\pgfmathsetmacro\tlstartfraction{(#2-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
-\pgfmathsetmacro\tlendfraction{(\tlendyear-\tlfirstyear)/(\tllastyear-\tlfirstyear)}%
- \cventry{\tikz[baseline=(tlendyear.north)]{
+\pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}
+\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+ \cventry{\tikz[baseline=(tl@endyear.north)]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
-        ++(\tlstartfraction*\hintscolumnwidth,0pt)
+        ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tlstartyear] {#4}
-        rectangle (\tlendfraction*\hintscolumnwidth,\tl@width-1pt);
+        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt);
      \ifnum #3=0
-        \shade [left color=#1] (\tlstartfraction*\hintscolumnwidth,0) 
-            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+        \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0) 
+            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \else
-        \fill [#1] (\tlstartfraction*\hintscolumnwidth,0) 
-            rectangle (\tlendfraction*\hintscolumnwidth,\tl@width);
+        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0) 
+            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \fi
      }
 }
