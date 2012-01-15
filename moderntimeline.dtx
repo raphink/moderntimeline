@@ -410,7 +410,7 @@
 %
 % \begin{macro}{\tldatelabelcventry}
 %    \begin{macrocode}
-\newcommand{\tldatelabelcventry}[8][sectionrectanglecolor]{%
+\newcommand{\tldatelabelcventry}[8][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
 \pgfmathsetmacro\tl@endyear{\tl@lastyear}
@@ -434,7 +434,7 @@
 %
 % \begin{macro}{\tldatecventry}
 %    \begin{macrocode}
-\newcommand{\tldatecventry}[7][sectionrectanglecolor]{%
+\newcommand{\tldatecventry}[7][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
 \pgfmathsetmacro\tl@endyear{\tl@lastyear}%
@@ -457,7 +457,7 @@
 %
 % \begin{macro}{\tlcventry}
 %    \begin{macrocode}
-\newcommand{\tlcventry}[8][sectionrectanglecolor]{%
+\newcommand{\tlcventry}[8][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
 \pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}%
@@ -490,13 +490,13 @@
 %
 % \begin{macro}{\tllabelcventry}
 %    \begin{macrocode}
-\newcommand{\tllabelcventry}[9][sectionrectanglecolor]{%
+\newcommand{\tllabelcventry}[9][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
 \pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}
 \pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 \pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
- \cventry{\tikz[baseline=(tl@endyear.north)]{
+ \cventry{\tikz[baseline=0pt]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
