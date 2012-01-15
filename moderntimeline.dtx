@@ -496,7 +496,7 @@
 \pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}
 \pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 \pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
- \cventry{\tikz[baseline=(tl@endyear.north)]{
+ \cventry{\tikz[baseline=0pt]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0) 
