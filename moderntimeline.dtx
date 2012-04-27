@@ -26,12 +26,12 @@
 %<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
 %<package>\ProvidesPackage{moderntimeline}
 %<*package>
-    [2012/01/17 0.6 Add timelines to moderncv entries]
+    [2012/04/27 0.7 Add timelines to moderncv entries]
 %</package>
 %
 %<*driver>
 \documentclass{ltxdoc}
-\usepackage{moderntimeline}[2011/09/28]
+\usepackage{moderntimeline}[2012/04/26]
 \EnableCrossrefs
 \CodelineIndex
 \RecordChanges
@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{211}
+% \CheckSum{222}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -62,6 +62,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.7}{2012/04/26}{Various fixes by Jake to allow fractional years in tllabelcventry}
 % \changes{0.6}{2012/01/17}{Fix compatibility with moderncv 0.15.1}
 % \changes{0.5}{2011/11/15}{Fix positions in tlcventry and tldatecventry, add tltextsingle, thanks to Stéphane Dupille}
 % \changes{0.4}{2011/10/02}{Add firstyear and lastyear options}
@@ -464,7 +465,7 @@
 \pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}%
 \pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 \pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\ifnum #3=0 \def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
+\pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt \def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
  \cventry{\tikz[baseline=0pt]{
     \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
     \fill [\tl@runningcolor] (0,0)
@@ -475,7 +476,7 @@
        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt)
        node [tl@endyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
        (\hintscolumnwidth,0pt) ;
-    \ifnum #3=0
+    \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
        \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0)
            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
     \else
@@ -500,11 +501,13 @@
  \cventry{\tikz[baseline=0pt]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
+     \useasboundingbox (0,-1.5ex)
+        rectangle (\hintscolumnwidth,1ex);
      \fill [#1] (0,0) 
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {#4}
         rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt);
-     \ifnum #3=0
+     \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
         \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0) 
             rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \else
@@ -513,7 +516,7 @@
      \fi
      }
 }
-{#5}{#6}{#7}{#8}{#9}
+{#5}{#6}{#7}{#8}{#9}%
 }
 %    \end{macrocode}
 % \end{macro}
