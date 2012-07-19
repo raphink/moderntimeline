@@ -61,5 +61,5 @@ clean:
 check:
 	test -e $(CONTRIBUTION).pdf
 	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Creator:[[:space:]]\+TeX"
-	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Pages:[[:space:]]\+$(EXPECTED_PAGES)"
+	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Pages:[[:space:]]\+$(EXPECTED_PAGES)$$"
 
