@@ -3,4 +3,5 @@ language: c
 install:
   - sudo apt-get update
   - sudo apt-get install texlive-latex-extra poppler-utils
+  - bundle update
 script: make moderntimeline.pdf && make check

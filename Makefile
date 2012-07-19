@@ -58,8 +58,7 @@ clean:
 	rm -f $(DOCFILES) $(PKGFILES)
 	rm -f $(FILE)
 
-check:
+check: $(CONTRIBUTION).pdf
 	test -e $(CONTRIBUTION).pdf
-	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Creator:[[:space:]]\+TeX"
-	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Pages:[[:space:]]\+$(EXPECTED_PAGES)$$"
+	rspec spec/pdf_spec.rb
 
