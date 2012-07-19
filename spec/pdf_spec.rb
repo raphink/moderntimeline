@@ -11,12 +11,8 @@ describe 'Moderntimeline PDF' do
   it 'should have page 1 with given media box' do
     reader.pages[0].attributes[:MediaBox].should eq([0, 0, 612, 792])
   end
-  it 'should have page 2 with given fonts' do
-    fonts = Array.new()
-    reader.pages[1].fonts.keys.each do |f|
-      fonts.push(reader.pages[1].fonts[f][:BaseFont])
-    end
-    fonts.should eq([:"MPHCCP+CMTT9", :"LTYYLY+CMTT10", :"OHGNUH+CMR10"])
+  it 'should have 3 fonts on page 2' do
+    reader.pages[1].fonts.keys.size.should eq(3)
   end
   it 'should start with a title' do
     reader.pages[0].text.should match('Themoderntimelinepackage.*')
