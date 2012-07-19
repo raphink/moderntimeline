@@ -1,0 +1,6 @@
+# There no language TeX
+language: c
+install:
+  - sudo apt-get update
+  - sudo apt-get install texlive-latex-extra
+script: make moderntimeline.pdf
