@@ -12,7 +12,6 @@ describe 'Moderntimeline PDF' do
     reader.pages[0].attributes[:MediaBox].should eq([0, 0, 612, 792])
   end
   it 'should have page 2 with given fonts' do
-    reader.pages[1].fonts.keys.should eq([:F31, :F32, :F8])
     fonts = Array.new()
     reader.pages[1].fonts.keys.each do |f|
       fonts.push(reader.pages[1].fonts[f][:BaseFont])
