@@ -13,6 +13,11 @@ describe 'Moderntimeline PDF' do
   end
   it 'should have page 2 with given fonts' do
     reader.pages[1].fonts.keys.should eq([:F31, :F32, :F8])
+    fonts = Array.new()
+    reader.pages[1].fonts.keys.each do |f|
+      fonts.push(reader.pages[1].fonts[f][:BaseFont])
+    end
+    fonts.should eq([:"MPHCCP+CMTT9", :"LTYYLY+CMTT10", :"OHGNUH+CMR10"])
   end
   it 'should start with a title' do
     reader.pages[0].text.should match('Themoderntimelinepackage.*')
