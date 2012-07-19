@@ -17,6 +17,9 @@ DOCFILES      = $(CONTRIBUTION).pdf
 
 TEXINSTALLDIR = /usr/local/texlive/texmf-local
 
+# Checks
+EXPECTED_PAGES = 8
+
 export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE NOTES LICENSE FREEVERSION FILE
 
 # default rule
@@ -54,4 +57,9 @@ clean:
 	rm -f *.aux *.glo *.idx *.log
 	rm -f $(DOCFILES) $(PKGFILES)
 	rm -f $(FILE)
+
+check:
+	test -e $(CONTRIBUTION).pdf
+	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Creator:[[:space:]]\+TeX"
+	pdfinfo $(CONTRIBUTION).pdf | grep -q "^Pages:[[:space:]]\+$(EXPECTED_PAGES)"
 
