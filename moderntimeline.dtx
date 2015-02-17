@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{222}
+% \CheckSum{251}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -250,6 +250,15 @@
 %        {The Internet}{}{Tried Scribus for a short while}
 % \end{verbatim}
 %
+% \DescribeMacro{\tlsetnotshadedfraction}
+% If last year in |\tlcventry| and |\tllabelcventry| is 0, the bar
+% is shaded. With this command you control the fraction of the bar
+% that is not shaded (default = 0):
+% 
+% \begin{verbatim}
+%    \tlsetnotshadedfraction{0.4} % The first 40% of the bar is not shaded 
+% \end{verbatim}
+%
 % \DescribeMacro{\tldatecventry}
 % Positions usually last long enough to draw time lines,
 % but there are also punctual entries, such as diplomas.
@@ -324,6 +333,15 @@
 \newcommand{\tlsince}[1]{%
    \def\tl@since{#1}
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlsetnotshadedfraction}
+%    \begin{macrocode}
+\newcommand{\tlsetnotshadedfraction}[1]{%
+   \def\tl@nsfrac{#1}
+}
+\tlsetnotshadedfraction{0}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -465,7 +483,8 @@
 \pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}%
 \pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
 \pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt \def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
+\pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
+\def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
  \cventry{\tikz[baseline=0pt]{
     \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
     \fill [\tl@runningcolor] (0,0)
@@ -477,7 +496,12 @@
        node [tl@endyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
        (\hintscolumnwidth,0pt) ;
     \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
-       \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0)
+       \newdimen\fullcolorwidth
+       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
+       \shade [left color=#1,right color=#1]
+(\tl@startfraction*\hintscolumnwidth,0)
+           rectangle (\fullcolorwidth,\tl@width);
+       \shade [left color=#1] (\fullcolorwidth,0)
            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
     \else
        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0)
@@ -503,15 +527,20 @@
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \useasboundingbox (0,-1.5ex)
         rectangle (\hintscolumnwidth,1ex);
-     \fill [#1] (0,0) 
+     \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {#4}
         rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt);
      \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
-        \shade [left color=#1] (\tl@startfraction*\hintscolumnwidth,0) 
-            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
+       \newdimen\fullcolorwidth
+       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
+       \shade [left color=#1,right color=#1]
+(\tl@startfraction*\hintscolumnwidth,0)
+           rectangle (\fullcolorwidth,\tl@width);
+       \shade [left color=#1] (\fullcolorwidth,0)
+           rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \else
-        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0) 
+        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0)
             rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
      \fi
      }
