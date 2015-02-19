@@ -250,6 +250,15 @@
 %        {The Internet}{}{Tried Scribus for a short while}
 % \end{verbatim}
 %
+% \DescribeMacro{\tlsetnotshadedfraction}
+% If last year in |\tlcventry| and |\tllabelcventry| is 0, the bar
+% is shaded. With this command you control the fraction of the bar
+% that is not shaded (default = 0):
+% 
+% \begin{verbatim}
+%    \tlsetnotshadedfraction{0.4} % The first 40% of the bar is not shaded 
+% \end{verbatim}
+%
 % \DescribeMacro{\tldatecventry}
 % Positions usually last long enough to draw time lines,
 % but there are also punctual entries, such as diplomas.
@@ -324,6 +333,15 @@
 \newcommand{\tlsince}[1]{%
    \def\tl@since{#1}
 }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlsetnotshadedfraction}
+%    \begin{macrocode}
+\newcommand{\tlsetnotshadedfraction}[1]{%
+   \def\tl@nsfrac{#1}
+}
+\tlsetnotshadedfraction{0}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -479,7 +497,7 @@
        (\hintscolumnwidth,0pt) ;
     \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
        \newdimen\fullcolorwidth
-       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*0.4)*\hintscolumnwidth}
+       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
        \shade [left color=#1,right color=#1]
 (\tl@startfraction*\hintscolumnwidth,0)
            rectangle (\fullcolorwidth,\tl@width);
@@ -515,7 +533,7 @@
         rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt);
      \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
        \newdimen\fullcolorwidth
-       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*0.4)*\hintscolumnwidth}
+       \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
        \shade [left color=#1,right color=#1]
 (\tl@startfraction*\hintscolumnwidth,0)
            rectangle (\fullcolorwidth,\tl@width);
