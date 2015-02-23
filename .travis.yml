@@ -6,3 +6,7 @@ install:
   - gem install bundler
   - bundle update
 script: make moderntimeline.pdf && make check
+after_success:
+  # Only deploy when tag matches VERSION
+  - grep -q "VERSION\s*=\s*${TRAVIS_BRANCH}$" Makefile && sudo apt-get install texlive-extra-utils libwww-mechanize-perl
+  - grep -q "VERSION\s*=\s*${TRAVIS_BRANCH}$" Makefile && make upload
