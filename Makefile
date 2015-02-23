@@ -25,7 +25,7 @@ export CONTRIBUTION VERSION NAME EMAIL SUMMARY DIRECTORY DONOTANNOUNCE ANNOUNCE 
 # default rule
 ctanify: $(FILE)
 
-$(FILE): README $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
+$(FILE): README.md $(SOURCEFILES) $(DOCFILES) $(PKGFILES)
 	ctanify --pkgname $(CONTRIBUTION) $^
 
 %.sty: %.dtx %.ins
@@ -42,7 +42,7 @@ $(CONTRIBUTION).pdf: $(CONTRIBUTION).sty
 	pdflatex -interaction=batchmode $(CONTRIBUTION).dtx
 
 upload: ctanify
-	$(CTANUPLOAD) -p
+	$(CTANUPLOAD) -P
 
 %.tds.zip: %.tar.gz
 	tar xzf $< $@
