@@ -15,6 +15,6 @@ describe 'Moderntimeline PDF' do
     reader.pages[1].fonts.keys.size.should eq(3)
   end
   it 'should start with a title' do
-    reader.pages[0].text.should match('Themoderntimelinepackage.*')
+    reader.pages[0].text.should match('The moderntimeline package')
   end
 end
