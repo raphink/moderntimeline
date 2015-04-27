@@ -2,8 +2,8 @@ require 'pdf/reader'
 
 describe 'Moderntimeline PDF' do
   reader = PDF::Reader.new('moderntimeline.pdf')
-  it 'should have 9 pages' do
-    reader.page_count.should eq(9)
+  it 'should have 11 pages' do
+    reader.page_count.should eq(11)
   end
   it 'should be made by TeX' do
     reader.info[:Creator].should eq('TeX')

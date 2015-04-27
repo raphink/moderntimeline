@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{251}
+% \CheckSum{333}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -204,6 +204,28 @@
 %    \tlsince{Since~}
 % \end{verbatim}
 %
+% \DescribeMacro{\tlsetnotshadedfraction}
+% If last year in |\tlcventry| and |\tllabelcventry| is 0, the bar
+% is shaded. With this command you control the fraction of the bar
+% that is not shaded (default = 0):
+% 
+% \begin{verbatim}
+%    \tlsetnotshadedfraction{0.4} % The first 40% of the bar is not shaded 
+% \end{verbatim}
+%
+%
+% \DescribeMacro{\tlenablemonths}
+% If you want to use months when drawing bars with |\tlcventry| and
+% |\tllabelcventry|, issue this command. This feature is not enabled
+% by default since it changes the way the bar are drawn if the month
+% is not specified.
+%
+% \DescribeMacro{\tldisablemonths}
+% This macro (default behaviour) does not in fact ignore months, but
+% retain the historical behaviour of this package to draw the bars at
+% the beginning of the year, so is not advisable to use months in dates.
+% Default.
+% 
 %
 % \subsection{CV entries}
 %
@@ -233,6 +255,19 @@
 % If the position is still held, use \texttt{0} as the end date.
 % This will add a gradient at the end of the time line.
 %
+% You can also specify months (which are used only for adjusting the bar length:
+% they are not shown in the labels), separated by a slash from the year:
+%
+% \begin{verbatim}
+%    \tlcventry{1999/2}{2002/6}{WYSIWYG User}{Unnamed Company}
+%        {Somewhere}{}{Tried hard to typeset documents}
+%    \tlcventry[blue]{2002/8}{0}{Happy TeXnician}{Any Company}
+%        {Anywhere}{}{Achieved nice typography and shared code with friends}
+% \end{verbatim}
+%
+% Don't use a leading zero, since this make PGF think the number is in octal,
+% so it complains when sees \texttt{08} and \texttt{09}.
+%
 %
 % \DescribeMacro{\tllabelcventry}
 % The |\tllabelcventry| macro is similar to |\tlcventry|,
@@ -251,14 +286,8 @@
 %        {The Internet}{}{Tried Scribus for a short while}
 % \end{verbatim}
 %
-% \DescribeMacro{\tlsetnotshadedfraction}
-% If last year in |\tlcventry| and |\tllabelcventry| is 0, the bar
-% is shaded. With this command you control the fraction of the bar
-% that is not shaded (default = 0):
-% 
-% \begin{verbatim}
-%    \tlsetnotshadedfraction{0.4} % The first 40% of the bar is not shaded 
-% \end{verbatim}
+% You can enter months for adjusting bar length as in |\tlcventry|.
+%
 %
 % \DescribeMacro{\tldatecventry}
 % Positions usually last long enough to draw time lines,
@@ -302,6 +331,8 @@
 \DeclareStringOption{firstyear}
 \DeclareStringOption{lastyear}
 \ProcessKeyvalOptions*
+\newif\ifstartyear
+\newif\ifissince
 %    \end{macrocode}
 %
 % \begin{macro}{\tlwidth}
@@ -334,15 +365,6 @@
 \newcommand{\tlsince}[1]{%
    \def\tl@since{#1}
 }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}{\tlsetnotshadedfraction}
-%    \begin{macrocode}
-\newcommand{\tlsetnotshadedfraction}[1]{%
-   \def\tl@nsfrac{#1}
-}
-\tlsetnotshadedfraction{0}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -408,6 +430,34 @@
 %    \end{macrocode}
 % \end{macro}
 %
+%
+% \begin{macro}{\tlsetnotshadedfraction}
+%    \begin{macrocode}
+\newcommand{\tlsetnotshadedfraction}[1]{%
+   \def\tl@nsfrac{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlenablemonths}
+%    \begin{macrocode}
+\newcommand{\tlenablemonths}{%
+   \def\tl@nomonthvalue{6}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tldisablemonths}
+%    \begin{macrocode}
+\newcommand{\tldisablemonths}{%
+   \def\tl@nomonthvalue{0}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % Defaults
 %    \begin{macrocode}
 \tltext{\scriptsize}
@@ -415,6 +465,8 @@
 \tlrunningwidth{0.05ex}
 \tlrunningcolor{gray}
 \tlsince{}
+\tlsetnotshadedfraction{0}
+\tldisablemonths
 %    \end{macrocode}
 %
 %
@@ -428,18 +480,114 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\tl@yearfraction}
+%    \begin{macrocode}
+\newcommand{\tl@yearfraction}[1]{% Month 1 - 12 -> 0 - 11
+  \gdef\tl@tmpyear{-1}% Resetting
+  \gdef\tl@tmpmonth{-1}%
+  \begingroup%
+  \edef\@tempa{#1/}%
+  \expandafter\endgroup\expandafter\tl@yearfraction@auxi\@tempa\@nnil%
+  \ifstartyear
+    \pgfmathsetmacro\tl@startyear{\tl@tmpyear+(\tl@tmpmonth-1)/12}%
+  \else
+    \ifnum\tl@tmpyear=0
+      \pgfmathsetmacro\tl@endyear{\tl@lastyear}%
+      \issincetrue%
+    \else
+      \pgfmathsetmacro\tl@endyear{\tl@tmpyear+\tl@tmpmonth/12}%
+      \issincefalse%
+    \fi
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\tl@yearfraction@auxi}
+%    \begin{macrocode}
+\newcommand{\tl@yearfraction@auxi}[2]{}
+\def\tl@yearfraction@auxi#1/#2\@nnil{%
+  \ifnum\tl@tmpyear<0 % First call
+    \pgfmathsetmacro\tl@tmpyear{+#1}%
+    \ifx\@nnil#2\@nnil
+      \pgfmathsetmacro\tl@tmpmonth{+\tl@nomonthvalue}%
+    \else
+      \expandafter\tl@yearfraction@auxi#2\@nnil%
+    \fi
+  \else
+    \pgfmathsetmacro\tl@tmpmonth{#1}%
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl@splitlabels}
+%    \begin{macrocode}
+\newcommand{\tl@splitlabels}[1]{
+  \gdef\tl@startlabel{}% Resetting
+  \begingroup%
+  \edef\@tempa{#1///}%
+  \expandafter\endgroup\expandafter\tl@splitlabels@auxi\@tempa\@nnil%
+}
+%    \end{macrocode}
+% \end{macro}
+% 
+% \begin{macro}{\tl@splitlabels@auxi}
+%    \begin{macrocode}
+\newcommand{\tl@splitlabels@auxi}[2]{}
+\def\tl@splitlabels@auxi#1///#2\@nnil{%
+  \ifx\tl@startlabel\empty\relax% First call
+    \gdef\tl@startlabel{#1}
+    \ifx\@nnil#2\@nnil
+      \gdef\tl@startlabel{}
+    \else
+      \expandafter\tl@splitlabels@auxi#2\@nnil%
+    \fi
+  \else
+    \gdef\tl@endlabel{#1}
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl@formatstartyear}
+%    \begin{macrocode}
+\newcommand{\tl@formatstartyear}[1]{
+  \startyeartrue
+  \tl@yearfraction{#1}
+  \pgfmathsetmacro\tl@startfraction{(\tl@startyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+  \ifissince
+    \xdef\tl@startlabel{\tl@since \tl@tmpyear}
+  \else
+    \xdef\tl@startlabel{\tl@tmpyear}
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl@formatendyear}
+%    \begin{macrocode}
+\newcommand{\tl@formatendyear}[1]{
+  \startyearfalse%
+  \tl@yearfraction{#1}
+  \pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+  \ifissince%
+    \xdef\tl@endlabel{}
+  \else
+    \xdef\tl@endlabel{\tl@tmpyear}
+  \fi
+}
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}{\tldatelabelcventry}
 %    \begin{macrocode}
 \newcommand{\tldatelabelcventry}[8][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tl@endyear{\tl@lastyear}
-\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-%    \end{macrocode}
-%    \begin{macrocode}
- \cventry{\tikz{
+\issincefalse
+\tl@formatstartyear{#2}
+\cventry{\tikz{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
@@ -458,9 +606,8 @@
 \newcommand{\tldatecventry}[7][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tl@endyear{\tl@lastyear}%
-\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\issincefalse
+\tl@formatstartyear{#2}
 \cventry{\tikz[baseline=0pt]{
     \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
     \fill [\tl@runningcolor] (0,0)
@@ -481,11 +628,8 @@
 \newcommand{\tlcventry}[8][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}%
-\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
-\def\tl@startlabel{\tl@since #2} \else \def\tl@startlabel{#2} \fi
+\tl@formatendyear{#3}
+\tl@formatstartyear{#2}
  \cventry{\tikz[baseline=0pt]{
     \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
     \fill [\tl@runningcolor] (0,0)
@@ -494,9 +638,9 @@
        ++(\tl@startfraction*\hintscolumnwidth,0pt)
        node [tl@startyear] {\tl@startlabel}
        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt)
-       node [tl@endyear] {\pgfmathparse{ifthenelse(#3==0,,#3)}\pgfmathresult}
+       node [tl@endyear] {\tl@endlabel}
        (\hintscolumnwidth,0pt) ;
-    \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
+    \ifissince
        \newdimen\fullcolorwidth
        \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
        \shade [left color=#1,right color=#1]
@@ -520,9 +664,8 @@
 \newcommand{\tllabelcventry}[9][color1]{%
 %    \end{macrocode}
 %    \begin{macrocode}
-\pgfmathsetmacro\tl@endyear{ifthenelse(#3==0,\tl@lastyear,#3)}
-\pgfmathsetmacro\tl@startfraction{(#2-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
-\pgfmathsetmacro\tl@endfraction{(\tl@endyear-\tl@firstyear)/(\tl@lastyear-\tl@firstyear)}%
+\tl@formatendyear{#3}
+\tl@formatstartyear{#2}
  \cventry{\tikz[baseline=0pt]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
@@ -531,8 +674,8 @@
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {#4}
-        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt);
-     \pgfmathsetlength{\pgf@xa}{#3} \ifdim\pgf@xa=0pt
+        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt) ;
+    \ifissince
        \newdimen\fullcolorwidth
        \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
        \shade [left color=#1,right color=#1]
