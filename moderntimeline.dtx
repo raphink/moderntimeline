@@ -588,7 +588,8 @@
 %    \begin{macrocode}
 \issincefalse
 \tl@formatstartyear{#2}
-\cventry{\tikz{
+\cventry{\tikz[baseline=0pt]{
+    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
      \fill [#1] (0,0)
