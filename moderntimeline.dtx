@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{335}
+% \CheckSum{352}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -62,6 +62,7 @@
 %   Right brace   \}     Tilde         \~}
 %
 %
+% \changes{0.10}{2017/01/31}{Add support to specify label for end date, thanks to ypid and Astrinus}
 % \changes{0.9}{2015/08/31}{Add month support, thanks to Astrinus}
 % \changes{0.8}{2015/02/25}{Add the tlsetnotshadedfraction command, thanks to Stefano Gronchi}
 % \changes{0.7}{2012/04/26}{Various fixes by Jake to allow fractional years in tllabelcventry}
@@ -283,6 +284,15 @@
 %
 % \begin{verbatim}
 %    \tllabelcventry[magenta]{2002}{2003}{July--November 2002}
+%        {Scribus Student}{GNU School}
+%        {The Internet}{}{Tried Scribus for a short while}
+% \end{verbatim}
+%
+% It is also possible to place a label where the end date would by making use
+% of the separator |///|:
+%
+% \begin{verbatim}
+%    \tllabelcventry[magenta]{2002}{2003}{July///November 2002}
 %        {Scribus Student}{GNU School}
 %        {The Internet}{}{Tried Scribus for a short while}
 % \end{verbatim}
@@ -529,6 +539,12 @@
   \begingroup%
   \edef\@tempa{#1///}%
   \expandafter\endgroup\expandafter\tl@splitlabels@auxi\@tempa\@nnil%
+  \ifx\tl@startlabel\empty\relax%
+    \gdef\tl@startlabel{#1}
+  \fi
+  \ifissince%
+    \xdef\tl@startlabel{\tl@since \tl@startlabel}
+  \fi
 }
 %    \end{macrocode}
 % \end{macro}
@@ -668,6 +684,7 @@
 %    \begin{macrocode}
 \tl@formatendyear{#3}
 \tl@formatstartyear{#2}
+\tl@splitlabels{#4}
  \cventry{\tikz[baseline=0pt]{
      \fill [\tl@runningcolor] (0,0)
         rectangle (\hintscolumnwidth,\tl@runningwidth);
@@ -675,8 +692,10 @@
         rectangle (\hintscolumnwidth,1ex);
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
-        node [tl@startyear] {#4}
-        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt) ;
+        node [tl@startyear] {\tl@startlabel}
+        rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width-1pt)
+        node [tl@endyear] {\tl@endlabel}
+        (\hintscolumnwidth,0pt) ;
     \ifissince
        \newdimen\fullcolorwidth
        \pgfmathsetlength\fullcolorwidth{\tl@startfraction*(1+(1-\tl@startfraction)*\tl@nsfrac)*\hintscolumnwidth}
