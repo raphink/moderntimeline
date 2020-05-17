@@ -228,6 +228,21 @@
 % the beginning of the year, so is not advisable to use months in dates.
 % Default.
 %
+% \DescribeMacro{\tlenablemarksmo}
+% This macro places vertical lines on the timeline bar at every month and year.
+% You can set the height of the marks with |\tlmarkheightmo| (default = 0.2ex).
+%
+% \DescribeMacro{\tlenablemakrsyr}
+% This macro places vertical lines on the timeline bar at every year.
+% You can set the height of the marks with |\tlmarkheightyr| (default = 0.4ex).
+%
+% \DescribeMacro{\tldisablemarksyr}
+% Disables the vertical lines marking years on the timeline bar.
+% This is the opposite of |\tlenablemarksyr|.
+%
+% \DescribeMacro{\tldisablemarksmo}
+% Disables the vertical lines marking months and years on the timeline bar.
+% This is the opposite of |\tlenablemarksmo|.
 %
 % \subsection{CV entries}
 %
@@ -344,6 +359,8 @@
 \ProcessKeyvalOptions*
 \newif\ifstartyear
 \newif\ifissince
+\newif\ifshowmarksyr
+\newif\ifshowmarksmo
 %    \end{macrocode}
 %
 % \begin{macro}{\tlwidth}
@@ -367,6 +384,22 @@
 %    \begin{macrocode}
 \newcommand{\tlrunningcolor}[1]{%
    \def\tl@runningcolor{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlmarkheightmo}
+%    \begin{macrocode}
+\newcommand{\tlmarkheightmo}[1]{%
+    \def\tl@markheightmo{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlmarkheightyr}
+%    \begin{macrocode}
+\newcommand{\tlmarkheightyr}[1]{%
+    \def\tl@markheightyr{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -469,6 +502,42 @@
 % \end{macro}
 %
 %
+% \begin{macro}{\tldisablemarksyr}
+%    \begin{macrocode}
+\newcommand{\tldisablemarksyr}{%
+    \showmarksyrfalse
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlenablemarksyr}
+%    \begin{macrocode}
+\newcommand{\tlenablemarksyr}{%
+    \showmarksyrtrue
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tldisablemarksmo}
+%    \begin{macrocode}
+\newcommand{\tldisablemarksmo}{%
+    \showmarksmofalse
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlenablemarksmo}
+%    \begin{macrocode}
+\newcommand{\tlenablemarksmo}{%
+    \showmarksmotrue
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % Defaults
 %    \begin{macrocode}
 \tltext{\scriptsize}
@@ -478,6 +547,8 @@
 \tlsince{}
 \tlsetnotshadedfraction{0}
 \tldisablemonths
+\tlmarkheightmo{0.2ex}
+\tlmarkheightyr{0.4ex}
 %    \end{macrocode}
 %
 %
@@ -487,6 +558,10 @@
    \def\tl@firstyear{#1}
    \def\tl@lastyear{#2}
    \pgfmathsetmacro\tl@yearrange{\tl@lastyear-\tl@firstyear}
+   \pgfmathsetmacro\tl@totalyears{\tl@lastyear-\tl@firstyear}%
+   \pgfmathsetmacro\tl@totalmonths{12*\tl@totalyears}%
+   \pgfmathsetmacro\tl@tickdistmo{\hintscolumnwidth/\tl@totalmonths}%
+   \pgfmathsetmacro\tl@tickdistyr{\hintscolumnwidth/\tl@totalyears}%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -528,6 +603,24 @@
   \else
     \pgfmathsetmacro\tl@tmpmonth{#1}%
   \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl@tlcvbar}
+%    \begin{macrocode}
+\newcommand{\tl@tlcvbar}{
+    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
+    \fill [\tl@runningcolor] (0,0)
+    rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \ifshowmarksyr
+        \foreach \x in {0, ..., \tl@totalyears}
+        \draw [\tl@runningcolor](\x*\tl@tickdistyr pt,0ex) -- (\x*\tl@tickdistyr pt,\tl@markheightyr);
+    \fi
+    \ifshowmarksmo
+        \foreach \x in {0, ..., \tl@totalmonths}
+        \draw [\tl@runningcolor](\x*\tl@tickdistmo pt,0ex) -- (\x*\tl@tickdistmo pt,\tl@markheightmo);
+    \fi
 }
 %    \end{macrocode}
 % \end{macro}
@@ -605,9 +698,7 @@
 \issincefalse
 \tl@formatstartyear{#2}
 \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-     \fill [\tl@runningcolor] (0,0)
-        rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {#3}
@@ -627,9 +718,7 @@
 \issincefalse
 \tl@formatstartyear{#2}
 \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-    \fill [\tl@runningcolor] (0,0)
-       rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
     \fill [#1] (0,0)
        ++(\tl@startfraction*\hintscolumnwidth,0pt)
        node [tl@singleyear] {#2}
@@ -649,9 +738,7 @@
 \tl@formatendyear{#3}
 \tl@formatstartyear{#2}
  \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-    \fill [\tl@runningcolor] (0,0)
-       rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
     \fill [#1] (0,0)
        ++(\tl@startfraction*\hintscolumnwidth,0pt)
        node [tl@startyear] {\tl@startlabel}
@@ -686,10 +773,7 @@
 \tl@formatstartyear{#2}
 \tl@splitlabels{#4}
  \cventry{\tikz[baseline=0pt]{
-     \fill [\tl@runningcolor] (0,0)
-        rectangle (\hintscolumnwidth,\tl@runningwidth);
-     \useasboundingbox (0,-1.5ex)
-        rectangle (\hintscolumnwidth,1ex);
+     \tl@tlcvbar
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {\tl@startlabel}
