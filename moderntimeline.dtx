@@ -102,12 +102,14 @@
 % and can be loaded with:
 %
 % \begin{verbatim}
-%    \usepackage[firstyear=1999,lastyear=2012]{moderntimeline}
+%    \usepackage[firstyear=1999,lastyear=2012,marksyr=0.4ex,marksmo=0.2ex]{moderntimeline}
 % \end{verbatim}
 %
 % The \texttt{firstyear} and \texttt{lastyear} options indicate the maximum dates used
 % to calibrate the time line. They are not mandatory and can be set later
 % by means of the |\ltmaxdates| macro.
+% The \texttt{marksyr} and \texttt{marksmo} options behave exactle the same as
+% the |\tlenablemarksyr| and |\tlenablemarksmo| (and associated) macros.
 %
 % \subsection{Settings}
 %
@@ -356,11 +358,11 @@
 }
 \DeclareStringOption{firstyear}
 \DeclareStringOption{lastyear}
+\DeclareStringOption{marksmo}[0.2ex]
+\DeclareStringOption{marksyr}[0.4ex]
 \ProcessKeyvalOptions*
 \newif\ifstartyear
 \newif\ifissince
-\newif\ifshowmarksyr
-\newif\ifshowmarksmo
 %    \end{macrocode}
 %
 % \begin{macro}{\tlwidth}
@@ -391,7 +393,7 @@
 % \begin{macro}{\tlmarkheightmo}
 %    \begin{macrocode}
 \newcommand{\tlmarkheightmo}[1]{%
-    \def\tl@markheightmo{#1}
+    \def\tl@marksmo{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -399,7 +401,7 @@
 % \begin{macro}{\tlmarkheightyr}
 %    \begin{macrocode}
 \newcommand{\tlmarkheightyr}[1]{%
-    \def\tl@markheightyr{#1}
+    \def\tl@marksyr{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -505,7 +507,7 @@
 % \begin{macro}{\tldisablemarksyr}
 %    \begin{macrocode}
 \newcommand{\tldisablemarksyr}{%
-    \showmarksyrfalse
+    \def\tl@marksyr{}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -514,7 +516,7 @@
 % \begin{macro}{\tlenablemarksyr}
 %    \begin{macrocode}
 \newcommand{\tlenablemarksyr}{%
-    \showmarksyrtrue
+    \def\tl@marksyr{0.4ex}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -523,7 +525,7 @@
 % \begin{macro}{\tldisablemarksmo}
 %    \begin{macrocode}
 \newcommand{\tldisablemarksmo}{%
-    \showmarksmofalse
+    \def\tl@marksmo{}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -532,7 +534,7 @@
 % \begin{macro}{\tlenablemarksmo}
 %    \begin{macrocode}
 \newcommand{\tlenablemarksmo}{%
-    \showmarksmotrue
+    \def\tl@marksmo{0.2ex}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -547,8 +549,6 @@
 \tlsince{}
 \tlsetnotshadedfraction{0}
 \tldisablemonths
-\tlmarkheightmo{0.2ex}
-\tlmarkheightyr{0.4ex}
 %    \end{macrocode}
 %
 %
@@ -558,10 +558,6 @@
    \def\tl@firstyear{#1}
    \def\tl@lastyear{#2}
    \pgfmathsetmacro\tl@yearrange{\tl@lastyear-\tl@firstyear}
-   \pgfmathsetmacro\tl@totalyears{\tl@lastyear-\tl@firstyear}%
-   \pgfmathsetmacro\tl@totalmonths{12*\tl@totalyears}%
-   \pgfmathsetmacro\tl@tickdistmo{\hintscolumnwidth/\tl@totalmonths}%
-   \pgfmathsetmacro\tl@tickdistyr{\hintscolumnwidth/\tl@totalyears}%
 }
 %    \end{macrocode}
 % \end{macro}
@@ -610,16 +606,20 @@
 % \begin{macro}{\tl@tlcvbar}
 %    \begin{macrocode}
 \newcommand{\tl@tlcvbar}{
+    \pgfmathsetmacro\tl@yearrange{\tl@lastyear-\tl@firstyear}
+    \pgfmathsetmacro\tl@totalmonths{12*\tl@yearrange}%
+    \pgfmathsetmacro\tl@tickdistmo{\hintscolumnwidth/\tl@totalmonths}%
+    \pgfmathsetmacro\tl@tickdistyr{\hintscolumnwidth/\tl@yearrange}%
     \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
     \fill [\tl@runningcolor] (0,0)
     rectangle (\hintscolumnwidth,\tl@runningwidth);
-    \ifshowmarksyr
-        \foreach \x in {0, ..., \tl@totalyears}
-        \draw [\tl@runningcolor](\x*\tl@tickdistyr pt,0ex) -- (\x*\tl@tickdistyr pt,\tl@markheightyr);
+    \ifx\tl@marksyr\empty\relax\else
+        \foreach \x in {0, ..., \tl@yearrange}
+        \draw [\tl@runningcolor](\x*\tl@tickdistyr pt,0ex) -- (\x*\tl@tickdistyr pt,\tl@marksyr);
     \fi
-    \ifshowmarksmo
+    \ifx\tl@marksmo\empty\relax\else
         \foreach \x in {0, ..., \tl@totalmonths}
-        \draw [\tl@runningcolor](\x*\tl@tickdistmo pt,0ex) -- (\x*\tl@tickdistmo pt,\tl@markheightmo);
+        \draw [\tl@runningcolor](\x*\tl@tickdistmo pt,0ex) -- (\x*\tl@tickdistmo pt,\tl@marksmo);
     \fi
 }
 %    \end{macrocode}
