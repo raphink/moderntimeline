@@ -43,7 +43,7 @@
 %</driver>
 % \fi
 %
-% \CheckSum{352}
+% \CheckSum{413}
 %
 % \CharacterTable
 %  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
@@ -102,12 +102,16 @@
 % and can be loaded with:
 %
 % \begin{verbatim}
-%    \usepackage[firstyear=1999,lastyear=2012]{moderntimeline}
+%    \usepackage[firstyear=1999,lastyear=2012,
+%                marksyr=0.4ex,marksmo=0.2ex
+%                ]{moderntimeline}
 % \end{verbatim}
 %
 % The \texttt{firstyear} and \texttt{lastyear} options indicate the maximum dates used
 % to calibrate the time line. They are not mandatory and can be set later
 % by means of the |\ltmaxdates| macro.
+% The \texttt{marksyr} and \texttt{marksmo} options behave exactly the same as
+% the |\tlenablemarksyr| and |\tlenablemarksmo| (and associated) macros.
 %
 % \subsection{Settings}
 %
@@ -228,6 +232,21 @@
 % the beginning of the year, so is not advisable to use months in dates.
 % Default.
 %
+% \DescribeMacro{\tlenablemarksmo}
+% This macro places vertical lines on the timeline bar at every month and year.
+% You can set the height of the marks with |\tlmarkheightmo| (default = 0.2ex).
+%
+% \DescribeMacro{\tlenablemakrsyr}
+% This macro places vertical lines on the timeline bar at every year.
+% You can set the height of the marks with |\tlmarkheightyr| (default = 0.4ex).
+%
+% \DescribeMacro{\tldisablemarksyr}
+% Disables the vertical lines marking years on the timeline bar.
+% This is the opposite of |\tlenablemarksyr|.
+%
+% \DescribeMacro{\tldisablemarksmo}
+% Disables the vertical lines marking months and years on the timeline bar.
+% This is the opposite of |\tlenablemarksmo|.
 %
 % \subsection{CV entries}
 %
@@ -341,6 +360,8 @@
 }
 \DeclareStringOption{firstyear}
 \DeclareStringOption{lastyear}
+\DeclareStringOption{marksmo}[0.2ex]
+\DeclareStringOption{marksyr}[0.4ex]
 \ProcessKeyvalOptions*
 \newif\ifstartyear
 \newif\ifissince
@@ -367,6 +388,22 @@
 %    \begin{macrocode}
 \newcommand{\tlrunningcolor}[1]{%
    \def\tl@runningcolor{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlmarkheightmo}
+%    \begin{macrocode}
+\newcommand{\tlmarkheightmo}[1]{%
+    \def\tl@marksmo{#1}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tlmarkheightyr}
+%    \begin{macrocode}
+\newcommand{\tlmarkheightyr}[1]{%
+    \def\tl@marksyr{#1}
 }
 %    \end{macrocode}
 % \end{macro}
@@ -469,6 +506,42 @@
 % \end{macro}
 %
 %
+% \begin{macro}{\tldisablemarksyr}
+%    \begin{macrocode}
+\newcommand{\tldisablemarksyr}{%
+    \def\tl@marksyr{}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlenablemarksyr}
+%    \begin{macrocode}
+\newcommand{\tlenablemarksyr}{%
+    \def\tl@marksyr{0.4ex}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tldisablemarksmo}
+%    \begin{macrocode}
+\newcommand{\tldisablemarksmo}{%
+    \def\tl@marksmo{}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}{\tlenablemarksmo}
+%    \begin{macrocode}
+\newcommand{\tlenablemarksmo}{%
+    \def\tl@marksmo{0.2ex}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%
 % Defaults
 %    \begin{macrocode}
 \tltext{\scriptsize}
@@ -528,6 +601,28 @@
   \else
     \pgfmathsetmacro\tl@tmpmonth{#1}%
   \fi
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\tl@tlcvbar}
+%    \begin{macrocode}
+\newcommand{\tl@tlcvbar}{
+    \pgfmathsetmacro\tl@yearrange{\tl@lastyear-\tl@firstyear}
+    \pgfmathsetmacro\tl@totalmonths{12*\tl@yearrange}%
+    \pgfmathsetmacro\tl@tickdistmo{\hintscolumnwidth/\tl@totalmonths}%
+    \pgfmathsetmacro\tl@tickdistyr{\hintscolumnwidth/\tl@yearrange}%
+    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
+    \fill [\tl@runningcolor] (0,0)
+    rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \ifx\tl@marksyr\empty\relax\else
+        \foreach \x in {0, ..., \tl@yearrange}
+        \draw [\tl@runningcolor](\x*\tl@tickdistyr pt,0ex) -- (\x*\tl@tickdistyr pt,\tl@marksyr);
+    \fi
+    \ifx\tl@marksmo\empty\relax\else
+        \foreach \x in {0, ..., \tl@totalmonths}
+        \draw [\tl@runningcolor](\x*\tl@tickdistmo pt,0ex) -- (\x*\tl@tickdistmo pt,\tl@marksmo);
+    \fi
 }
 %    \end{macrocode}
 % \end{macro}
@@ -605,9 +700,7 @@
 \issincefalse
 \tl@formatstartyear{#2}
 \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-     \fill [\tl@runningcolor] (0,0)
-        rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {#3}
@@ -627,9 +720,7 @@
 \issincefalse
 \tl@formatstartyear{#2}
 \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-    \fill [\tl@runningcolor] (0,0)
-       rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
     \fill [#1] (0,0)
        ++(\tl@startfraction*\hintscolumnwidth,0pt)
        node [tl@singleyear] {#2}
@@ -649,9 +740,7 @@
 \tl@formatendyear{#3}
 \tl@formatstartyear{#2}
  \cventry{\tikz[baseline=0pt]{
-    \useasboundingbox (0,-1.5ex) rectangle (\hintscolumnwidth,1ex);
-    \fill [\tl@runningcolor] (0,0)
-       rectangle (\hintscolumnwidth,\tl@runningwidth);
+    \tl@tlcvbar
     \fill [#1] (0,0)
        ++(\tl@startfraction*\hintscolumnwidth,0pt)
        node [tl@startyear] {\tl@startlabel}
@@ -665,7 +754,7 @@
 (\tl@startfraction*\hintscolumnwidth,0)
            rectangle (\fullcolorwidth,\tl@width);
        \shade [left color=#1] (\fullcolorwidth,0)
-           rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
+           rectangle (\tl@endfraction*\hintscolumnwidth + 1,\tl@width);
     \else
        \fill [#1] (\tl@startfraction*\hintscolumnwidth,0)
            rectangle (\tl@endfraction*\hintscolumnwidth,\tl@width);
@@ -686,10 +775,7 @@
 \tl@formatstartyear{#2}
 \tl@splitlabels{#4}
  \cventry{\tikz[baseline=0pt]{
-     \fill [\tl@runningcolor] (0,0)
-        rectangle (\hintscolumnwidth,\tl@runningwidth);
-     \useasboundingbox (0,-1.5ex)
-        rectangle (\hintscolumnwidth,1ex);
+     \tl@tlcvbar
      \fill [#1] (0,0)
         ++(\tl@startfraction*\hintscolumnwidth,0pt)
         node [tl@startyear] {\tl@startlabel}
