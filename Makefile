@@ -1,7 +1,7 @@
 CTANUPLOAD=ctanupload
 
 CONTRIBUTION  = moderntimeline
-VERSION       = v0.10
+VERSION       = v0.11
 SUMMARY       = Add timelines to moderncv entries
 NAME          = Raphaël Pinson
 EMAIL         = raphink@gmail.com
